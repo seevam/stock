@@ -237,6 +237,18 @@
             border-radius: 10px;
             margin-bottom: 10px;
             border-left: 4px solid #ff6b35;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .news-title {
@@ -286,6 +298,37 @@
 
         .flag-in {
             background: linear-gradient(to bottom, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         @media (max-width: 768px) {
@@ -381,7 +424,14 @@
                 buyBtn: "Buy",
                 sellBtn: "Sell",
                 qtyPlaceholder: "Qty",
-                langToggle: "हिंदी"
+                langToggle: "हिंदी",
+                insufficientFunds: "Insufficient funds!",
+                notEnoughShares: "You don't own enough shares!",
+                bought: "Bought",
+                sold: "Sold",
+                sharesOf: "shares of",
+                for: "for",
+                resetConfirm: "Are you sure you want to reset the game? This will clear your portfolio and reset your cash to ₹1,00,000."
             },
             hi: {
                 title: "📈 शेयर बाज़ार सिमुलेटर",
@@ -399,7 +449,14 @@
                 buyBtn: "खरीदें",
                 sellBtn: "बेचें", 
                 qtyPlaceholder: "मात्रा",
-                langToggle: "English"
+                langToggle: "English",
+                insufficientFunds: "अपर्याप्त धन!",
+                notEnoughShares: "आपके पास पर्याप्त शेयर नहीं हैं!",
+                bought: "खरीदे गए",
+                sold: "बेचे गए",
+                sharesOf: "शेयर",
+                for: "में",
+                resetConfirm: "क्या आप वाकई गेम रीसेट करना चाहते हैं? इससे आपका पोर्टफोलियो क्लिअर हो जाएगा और आपका नकद ₹1,00,000 पर रीसेट हो जाएगा।"
             }
         };
 
@@ -432,7 +489,10 @@
                 { title: "FII Investment Flows", content: "Foreign institutional investors increase stake in Indian equity markets", impact: "positive" },
                 { title: "GST Policy Changes", content: "New GST regulations may impact various sectors differently", impact: "mixed" },
                 { title: "Digital India Initiative", content: "Government's digital push benefits technology and telecom sectors", impact: "positive" },
-                { title: "Oil Price Volatility", content: "Crude oil price fluctuations affect energy and petrochemical companies", impact: "mixed" }
+                { title: "Oil Price Volatility", content: "Crude oil price fluctuations affect energy and petrochemical companies", impact: "mixed" },
+                { title: "Quarterly Results Season", content: "Companies across sectors announce their quarterly financial results", impact: "mixed" },
+                { title: "Infrastructure Boost", content: "Government announces new infrastructure projects boosting construction stocks", impact: "positive" },
+                { title: "Global Market Trends", content: "International market movements influence domestic stock performance", impact: "mixed" }
             ],
             hi: [
                 { title: "आरबीआई मौद्रिक नीति निर्णय", content: "भारतीय रिज़र्व बैंक ने नई नीतिगत दरों की घोषणा की है जो बैंकिंग शेयरों को प्रभावित करेगी", impact: "mixed" },
@@ -441,7 +501,10 @@
                 { title: "विदेशी निवेश प्रवाह", content: "विदेशी संस्थागत निवेशकों ने भारतीय इक्विटी बाजारों में हिस्सेदारी बढ़ाई", impact: "positive" },
                 { title: "जीएसटी नीति बदलाव", content: "नए जीएसटी नियम विभिन्न क्षेत्रों को अलग तरीके से प्रभावित कर सकते हैं", impact: "mixed" },
                 { title: "डिजिटल इंडिया पहल", content: "सरकार का डिजिटल पुश प्रौद्योगिकी और दूरसंचार क्षेत्रों को लाभ पहुंचाता है", impact: "positive" },
-                { title: "तेल की कीमतों में अस्थिरता", content: "कच्चे तेल की कीमतों में उतार-चढ़ाव ऊर्जा और पेट्रोकेमिकल कंपनियों को प्रभावित करता है", impact: "mixed" }
+                { title: "तेल की कीमतों में अस्थिरता", content: "कच्चे तेल की कीमतों में उतार-चढ़ाव ऊर्जा और पेट्रोकेमिकल कंपनियों को प्रभावित करता है", impact: "mixed" },
+                { title: "तिमाही परिणाम सीजन", content: "विभिन्न क्षेत्रों की कंपनियां अपने तिमाही वित्तीय परिणामों की घोषणा करती हैं", impact: "mixed" },
+                { title: "बुनियादी ढांचे को बढ़ावा", content: "सरकार ने नई बुनियादी ढांचा परियोजनाओं की घोषणा की है जो निर्माण शेयरों को बढ़ावा देती है", impact: "positive" },
+                { title: "वैश्विक बाजार रुझान", content: "अंतर्राष्ट्रीय बाजार की गतिविधियां घरेलू शेयर प्रदर्शन को प्रभावित करती हैं", impact: "mixed" }
             ]
         };
 
@@ -473,6 +536,12 @@
             // Update cash label
             const cashBalance = document.getElementById('cashBalance');
             document.getElementById('cashLabel').innerHTML = `${t.cashLabel}<span id="cashBalance">${cashBalance.textContent}</span>`;
+            
+            // Update no positions text if visible
+            const noPositionsElement = document.getElementById('noPositions');
+            if (noPositionsElement) {
+                noPositionsElement.textContent = t.noPositions;
+            }
         }
 
         // Initialize the game
@@ -548,9 +617,10 @@
             const stock = stocks[symbol];
             const totalCost = stock.price * quantity;
             const lang = gameState.language;
+            const t = translations[lang];
             
             if (totalCost > gameState.cash) {
-                alert(lang === 'hi' ? 'अपर्याप्त धन!' : 'Insufficient funds!');
+                showNotification(t.insufficientFunds, 'error');
                 return;
             }
             
@@ -567,8 +637,8 @@
             renderStocks();
             
             const message = lang === 'hi' ? 
-                `${symbol} के ${quantity} शेयर ₹${totalCost.toFixed(2)} में खरीदे गए` : 
-                `Bought ${quantity} shares of ${symbol} for ₹${totalCost.toFixed(2)}`;
+                `${symbol} के ${quantity} ${t.sharesOf} ₹${totalCost.toFixed(2)} ${t.for} ${t.bought}` : 
+                `${t.bought} ${quantity} ${t.sharesOf} ${symbol} ${t.for} ₹${totalCost.toFixed(2)}`;
             showNotification(message, 'success');
         }
 
@@ -577,9 +647,10 @@
             const quantity = parseInt(document.getElementById(`qty-${symbol}`).value) || 1;
             const stock = stocks[symbol];
             const lang = gameState.language;
+            const t = translations[lang];
             
             if (quantity > stock.owned) {
-                alert(lang === 'hi' ? 'आपके पास पर्याप्त शेयर नहीं हैं!' : 'You don\'t own enough shares!');
+                showNotification(t.notEnoughShares, 'error');
                 return;
             }
             
@@ -595,8 +666,8 @@
             renderStocks();
             
             const message = lang === 'hi' ? 
-                `${symbol} के ${quantity} शेयर ₹${totalValue.toFixed(2)} में बेचे गए` : 
-                `Sold ${quantity} shares of ${symbol} for ₹${totalValue.toFixed(2)}`;
+                `${symbol} के ${quantity} ${t.sharesOf} ₹${totalValue.toFixed(2)} ${t.for} ${t.sold}` : 
+                `${t.sold} ${quantity} ${t.sharesOf} ${symbol} ${t.for} ₹${totalValue.toFixed(2)}`;
             showNotification(message, 'success');
         }
 
@@ -634,91 +705,100 @@
                             <span class="performance-indicator ${pnlClass}">
                                 ${pnl >= 0 ? '+' : ''}₹${pnl.toFixed(2)} (${pnlPercent.toFixed(1)}%)
                             </span>
-                        </td>
-                    `;
-                    
-                    portfolioBody.appendChild(row);
-                }
+
+</span>
+                    </td>
+                `;
+                
+                portfolioBody.appendChild(row);
+            }
+        });
+        
+        if (!hasPositions) {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="4" style="text-align: center; color: #666;" id="noPositions">${t.noPositions}</td>`;
+            portfolioBody.appendChild(row);
+        }
+        
+        cashBalance.textContent = gameState.cash.toFixed(2);
+        portfolioValue.textContent = `₹${totalValue.toFixed(2)}`;
+    }
+
+    // Show notification
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Generate random news
+    function generateNews() {
+        const newsContainer = document.getElementById('newsContainer');
+        const lang = gameState.language;
+        const events = newsEvents[lang];
+        const randomEvent = events[Math.floor(Math.random() * events.length)];
+        
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
+        newsItem.innerHTML = `
+            <div class="news-title">${randomEvent.title}</div>
+            <div class="news-content">${randomEvent.content}</div>
+        `;
+        
+        newsContainer.insertBefore(newsItem, newsContainer.firstChild);
+        
+        // Keep only last 5 news items
+        while (newsContainer.children.length > 5) {
+            newsContainer.removeChild(newsContainer.lastChild);
+        }
+        
+        // Apply market impact based on news
+        if (randomEvent.impact === 'positive') {
+            applyMarketImpact(0.005, 0.02); // Small positive bias
+        } else if (randomEvent.impact === 'negative') {
+            applyMarketImpact(-0.005, 0.02); // Small negative bias
+        }
+    }
+
+    // Apply market impact from news
+    function applyMarketImpact(bias, volatility) {
+        Object.keys(stocks).forEach(symbol => {
+            const stock = stocks[symbol];
+            const change = bias + (Math.random() - 0.5) * 2 * volatility;
+            stock.price = Math.max(stock.price * (1 + change), 1);
+        });
+    }
+
+    // Reset game
+    function resetGame() {
+        const lang = gameState.language;
+        const t = translations[lang];
+        
+        if (confirm(t.resetConfirm)) {
+            gameState.cash = gameState.startingCash;
+            
+            Object.keys(stocks).forEach(symbol => {
+                stocks[symbol].owned = 0;
+                stocks[symbol].avgCost = 0;
+                stocks[symbol].change = 0;
             });
             
-            if (!hasPositions) {
-                portfolioBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #666;">${t.noPositions}</td></tr>`;
-            }
+            updatePortfolioDisplay();
+            renderStocks();
             
-            cashBalance.textContent = gameState.cash.toFixed(2);
-            portfolioValue.textContent = `₹${totalValue.toFixed(2)}`;
-            
-            // Add performance indicator to portfolio value
-            const totalReturn = totalValue - gameState.startingCash;
-            const returnPercent = (totalReturn / gameState.startingCash) * 100;
-            
-            if (totalReturn !== 0) {
-                const indicator = totalReturn >= 0 ? 'profit' : 'loss';
-                portfolioValue.innerHTML = `
-                    ₹${totalValue.toFixed(2)}
-                    <div style="font-size: 0.8rem; margin-top: 5px;">
-                        <span class="performance-indicator ${indicator}">
-                            ${totalReturn >= 0 ? '+' : ''}₹${totalReturn.toFixed(2)} (${returnPercent.toFixed(1)}%)
-                        </span>
-                    </div>
-                `;
-            }
+            // Clear news
+            document.getElementById('newsContainer').innerHTML = '';
+            generateNews();
         }
+    }
 
-        // Generate market news
-        function generateNews() {
-            const newsContainer = document.getElementById('newsContainer');
-            const lang = gameState.language;
-            const newsArray = newsEvents[lang];
-            const randomNews = newsArray[Math.floor(Math.random() * newsArray.length)];
-            
-            const newsItem = document.createElement('div');
-            newsItem.className = 'news-item';
-            newsItem.innerHTML = `
-                <div class="news-title">${randomNews.title}</div>
-                <div class="news-content">${randomNews.content}</div>
-            `;
-            
-            newsContainer.insertBefore(newsItem, newsContainer.firstChild);
-            
-            // Keep only last 5 news items
-            while (newsContainer.children.length > 5) {
-                newsContainer.removeChild(newsContainer.lastChild);
-            }
-            
-            // Apply news impact to stocks
-            if (Math.random() < 0.3) { // 30% chance news affects prices
-                const affectedStocks = Object.keys(stocks).slice(0, Math.floor(Math.random() * 3) + 1);
-                let impact = 0;
-                
-                if (randomNews.impact === 'positive') impact = 0.05;
-                else if (randomNews.impact === 'negative') impact = -0.05;
-                else impact = (Math.random() - 0.5) * 0.04; // mixed impact
-                
-                affectedStocks.forEach(symbol => {
-                    stocks[symbol].price *= (1 + impact + (Math.random() - 0.5) * 0.02);
-                });
-            }
-        }
-
-        // Show notification
-        function showNotification(message, type) {
-            const emoji = type === 'success' ? '✅' : '❌';
-            alert(`${emoji} ${message}`);
-        }
-
-        // Reset game
-        function resetGame() {
-            const lang = gameState.language;
-            const confirmMsg = lang === 'hi' ? 
-                'क्या आप वाकई गेम रीसेट करना चाहते हैं? इससे आपका पोर्टफोलियो क्लिअर हो जाएगा और आपका नकद ₹1,00,000 पर रीसेट हो जाएगा।' :
-                'Are you sure you want to reset the game? This will clear your portfolio and reset your cash to ₹1,00,000.';
-            
-            if (confirm(confirmMsg)) {
-                gameState.cash = 100000;
-                gameState.startingCash = 100000;
-                
-                Object.keys(stocks).forEach(symbol => {
-                    stocks[symbol].owned = 0;
-                    stocks[symbol].avgCost = 0;
-                });
+    // Initialize game when page loads
+    window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
