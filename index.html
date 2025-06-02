@@ -28,10 +28,30 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
             color: white;
             padding: 20px;
             text-align: center;
+            position: relative;
+        }
+
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .language-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
         }
 
         .header h1 {
@@ -105,7 +125,7 @@
         .stock-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
+            border-color: #ff6b35;
         }
 
         .stock-header {
@@ -178,6 +198,12 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .portfolio-table {
             width: 100%;
             border-collapse: collapse;
@@ -192,7 +218,7 @@
         }
 
         .portfolio-table th {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
             color: white;
             font-weight: bold;
         }
@@ -210,7 +236,7 @@
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #ff6b35;
         }
 
         .news-title {
@@ -250,6 +276,18 @@
             color: #721c24;
         }
 
+        .flag {
+            display: inline-block;
+            width: 20px;
+            height: 15px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+
+        .flag-in {
+            background: linear-gradient(to bottom, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%);
+        }
+
         @media (max-width: 768px) {
             .game-area {
                 grid-template-columns: 1fr;
@@ -262,40 +300,34 @@
             .header h1 {
                 font-size: 2rem;
             }
-        }
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            .language-toggle {
+                position: static;
+                margin-bottom: 15px;
+                display: inline-block;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📈 Stock Market Simulator</h1>
-            <p class="subtitle">Learn to trade with virtual money - No risk, real learning!</p>
+            <button class="language-toggle" onclick="toggleLanguage()" id="langToggle">
+                <span class="flag flag-in"></span>हिंदी
+            </button>
+            <h1 id="title">📈 Stock Market Simulator</h1>
+            <p class="subtitle" id="subtitle">Learn to trade with virtual money - No risk, real learning!</p>
         </div>
         
         <div class="game-area">
             <div class="main-panel">
-                <h2>📊 Available Stocks</h2>
+                <h2 id="stocksTitle">📊 Available Stocks</h2>
                 <div class="stocks-grid" id="stocksGrid">
                     <!-- Stocks will be populated here -->
                 </div>
                 
                 <div class="news-section">
-                    <h3>📰 Market News</h3>
+                    <h3 id="newsTitle">📰 Market News</h3>
                     <div id="newsContainer">
                         <!-- News will be populated here -->
                     </div>
@@ -304,60 +336,144 @@
             
             <div class="sidebar">
                 <div class="portfolio-summary">
-                    <div class="portfolio-value" id="portfolioValue">$10,000.00</div>
-                    <div class="cash-balance">Cash: $<span id="cashBalance">10000.00</span></div>
+                    <div class="portfolio-value" id="portfolioValue">₹1,00,000.00</div>
+                    <div class="cash-balance" id="cashLabel">Cash: ₹<span id="cashBalance">100000.00</span></div>
                 </div>
                 
-                <h3>📋 Your Portfolio</h3>
+                <h3 id="portfolioTitle">📋 Your Portfolio</h3>
                 <table class="portfolio-table">
                     <thead>
                         <tr>
-                            <th>Stock</th>
-                            <th>Shares</th>
-                            <th>Value</th>
-                            <th>P&L</th>
+                            <th id="stockHeader">Stock</th>
+                            <th id="sharesHeader">Shares</th>
+                            <th id="valueHeader">Value</th>
+                            <th id="plHeader">P&L</th>
                         </tr>
                     </thead>
                     <tbody id="portfolioBody">
                         <tr>
-                            <td colspan="4" style="text-align: center; color: #666;">No positions yet. Start trading!</td>
+                            <td colspan="4" style="text-align: center; color: #666;" id="noPositions">No positions yet. Start trading!</td>
                         </tr>
                     </tbody>
                 </table>
                 
-                <button class="btn reset-btn" onclick="resetGame()">🔄 Reset Game</button>
+                <button class="btn reset-btn" onclick="resetGame()" id="resetBtn">🔄 Reset Game</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Language data
+        const translations = {
+            en: {
+                title: "📈 Stock Market Simulator",
+                subtitle: "Learn to trade with virtual money - No risk, real learning!",
+                stocksTitle: "📊 Available Stocks",
+                newsTitle: "📰 Market News", 
+                portfolioTitle: "📋 Your Portfolio",
+                cashLabel: "Cash: ₹",
+                stockHeader: "Stock",
+                sharesHeader: "Shares", 
+                valueHeader: "Value",
+                plHeader: "P&L",
+                noPositions: "No positions yet. Start trading!",
+                resetBtn: "🔄 Reset Game",
+                buyBtn: "Buy",
+                sellBtn: "Sell",
+                qtyPlaceholder: "Qty",
+                langToggle: "हिंदी"
+            },
+            hi: {
+                title: "📈 शेयर बाज़ार सिमुलेटर",
+                subtitle: "वर्चुअल पैसे से ट्रेडिंग सीखें - कोई जोखिम नहीं, सच्ची सीख!",
+                stocksTitle: "📊 उपलब्ध शेयर",
+                newsTitle: "📰 बाज़ार समाचार",
+                portfolioTitle: "📋 आपका पोर्टफोलियो", 
+                cashLabel: "नकद: ₹",
+                stockHeader: "शेयर",
+                sharesHeader: "संख्या",
+                valueHeader: "मूल्य", 
+                plHeader: "लाभ/हानि",
+                noPositions: "अभी तक कोई पोजीशन नहीं। ट्रेडिंग शुरू करें!",
+                resetBtn: "🔄 गेम रीसेट करें",
+                buyBtn: "खरीदें",
+                sellBtn: "बेचें", 
+                qtyPlaceholder: "मात्रा",
+                langToggle: "English"
+            }
+        };
+
         // Game state
         let gameState = {
-            cash: 10000,
+            cash: 100000,
             portfolio: {},
-            startingCash: 10000
+            startingCash: 100000,
+            language: 'en'
         };
 
-        // Stock data with realistic companies
+        // Indian stock data with popular companies
         let stocks = {
-            AAPL: { name: "Apple Inc.", price: 150.00, change: 0, owned: 0, avgCost: 0 },
-            GOOGL: { name: "Alphabet Inc.", price: 2500.00, change: 0, owned: 0, avgCost: 0 },
-            MSFT: { name: "Microsoft Corp.", price: 300.00, change: 0, owned: 0, avgCost: 0 },
-            AMZN: { name: "Amazon.com Inc.", price: 3200.00, change: 0, owned: 0, avgCost: 0 },
-            TSLA: { name: "Tesla Inc.", price: 800.00, change: 0, owned: 0, avgCost: 0 },
-            NVDA: { name: "NVIDIA Corp.", price: 220.00, change: 0, owned: 0, avgCost: 0 },
-            META: { name: "Meta Platforms", price: 280.00, change: 0, owned: 0, avgCost: 0 },
-            NFLX: { name: "Netflix Inc.", price: 400.00, change: 0, owned: 0, avgCost: 0 }
+            RELIANCE: { name: "Reliance Industries", nameHi: "रिलायंस इंडस्ट्रीज", price: 2450.00, change: 0, owned: 0, avgCost: 0 },
+            TCS: { name: "Tata Consultancy Services", nameHi: "टाटा कंसल्टेंसी सर्विसेज", price: 3650.00, change: 0, owned: 0, avgCost: 0 },
+            HDFCBANK: { name: "HDFC Bank", nameHi: "एचडीएफसी बैंक", price: 1580.00, change: 0, owned: 0, avgCost: 0 },
+            INFY: { name: "Infosys Limited", nameHi: "इंफोसिस लिमिटेड", price: 1420.00, change: 0, owned: 0, avgCost: 0 },
+            HINDUNILVR: { name: "Hindustan Unilever", nameHi: "हिंदुस्तान यूनिलीवर", price: 2380.00, change: 0, owned: 0, avgCost: 0 },
+            ICICIBANK: { name: "ICICI Bank", nameHi: "आईसीआईसीआई बैंक", price: 950.00, change: 0, owned: 0, avgCost: 0 },
+            BHARTIARTL: { name: "Bharti Airtel", nameHi: "भारती एयरटेल", price: 820.00, change: 0, owned: 0, avgCost: 0 },
+            ITC: { name: "ITC Limited", nameHi: "आईटीसी लिमिटेड", price: 415.00, change: 0, owned: 0, avgCost: 0 }
         };
 
-        // News events that affect stock prices
-        const newsEvents = [
-            { title: "Tech Earnings Season Begins", content: "Major tech companies report strong quarterly results", impact: "positive" },
-            { title: "Market Volatility Expected", content: "Analysts predict increased market volatility due to economic uncertainty", impact: "negative" },
-            { title: "New Product Launches Drive Growth", content: "Several companies announce innovative product launches", impact: "positive" },
-            { title: "Regulatory Concerns Surface", content: "New regulations may impact tech sector growth", impact: "negative" },
-            { title: "AI Revolution Continues", content: "Artificial intelligence developments boost tech stocks", impact: "positive" }
-        ];
+        // Indian market news events
+        const newsEvents = {
+            en: [
+                { title: "RBI Monetary Policy Decision", content: "Reserve Bank of India announces new policy rates affecting banking stocks", impact: "mixed" },
+                { title: "IT Sector Shows Strong Growth", content: "Indian IT companies report robust quarterly earnings with increased export demand", impact: "positive" },
+                { title: "Monsoon Forecast Impacts FMCG", content: "Normal monsoon predictions boost consumer goods and rural-focused stocks", impact: "positive" },
+                { title: "FII Investment Flows", content: "Foreign institutional investors increase stake in Indian equity markets", impact: "positive" },
+                { title: "GST Policy Changes", content: "New GST regulations may impact various sectors differently", impact: "mixed" },
+                { title: "Digital India Initiative", content: "Government's digital push benefits technology and telecom sectors", impact: "positive" },
+                { title: "Oil Price Volatility", content: "Crude oil price fluctuations affect energy and petrochemical companies", impact: "mixed" }
+            ],
+            hi: [
+                { title: "आरबीआई मौद्रिक नीति निर्णय", content: "भारतीय रिज़र्व बैंक ने नई नीतिगत दरों की घोषणा की है जो बैंकिंग शेयरों को प्रभावित करेगी", impact: "mixed" },
+                { title: "आईटी क्षेत्र में मजबूत वृद्धि", content: "भारतीय आईटी कंपनियों ने बढ़ती निर्यात मांग के साथ मजबूत तिमाही आय की रिपोर्ट दी", impact: "positive" },
+                { title: "मानसून पूर्वानुमान एफएमसीजी को प्रभावित", content: "सामान्य मानसून की भविष्यवाणी उपभोक्ता वस्तुओं और ग्रामीण-केंद्रित शेयरों को बढ़ावा देती है", impact: "positive" },
+                { title: "विदेशी निवेश प्रवाह", content: "विदेशी संस्थागत निवेशकों ने भारतीय इक्विटी बाजारों में हिस्सेदारी बढ़ाई", impact: "positive" },
+                { title: "जीएसटी नीति बदलाव", content: "नए जीएसटी नियम विभिन्न क्षेत्रों को अलग तरीके से प्रभावित कर सकते हैं", impact: "mixed" },
+                { title: "डिजिटल इंडिया पहल", content: "सरकार का डिजिटल पुश प्रौद्योगिकी और दूरसंचार क्षेत्रों को लाभ पहुंचाता है", impact: "positive" },
+                { title: "तेल की कीमतों में अस्थिरता", content: "कच्चे तेल की कीमतों में उतार-चढ़ाव ऊर्जा और पेट्रोकेमिकल कंपनियों को प्रभावित करता है", impact: "mixed" }
+            ]
+        };
+
+        // Toggle language function
+        function toggleLanguage() {
+            gameState.language = gameState.language === 'en' ? 'hi' : 'en';
+            updateLanguage();
+            renderStocks();
+            updatePortfolioDisplay();
+        }
+
+        // Update language texts
+        function updateLanguage() {
+            const lang = gameState.language;
+            const t = translations[lang];
+            
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('stocksTitle').textContent = t.stocksTitle;
+            document.getElementById('newsTitle').textContent = t.newsTitle;
+            document.getElementById('portfolioTitle').textContent = t.portfolioTitle;
+            document.getElementById('stockHeader').textContent = t.stockHeader;
+            document.getElementById('sharesHeader').textContent = t.sharesHeader;
+            document.getElementById('valueHeader').textContent = t.valueHeader;
+            document.getElementById('plHeader').textContent = t.plHeader;
+            document.getElementById('resetBtn').textContent = t.resetBtn;
+            document.getElementById('langToggle').innerHTML = `<span class="flag flag-in"></span>${t.langToggle}`;
+            
+            // Update cash label
+            const cashBalance = document.getElementById('cashBalance');
+            document.getElementById('cashLabel').innerHTML = `${t.cashLabel}<span id="cashBalance">${cashBalance.textContent}</span>`;
+        }
 
         // Initialize the game
         function initGame() {
@@ -390,6 +506,8 @@
         // Render stock cards
         function renderStocks() {
             const grid = document.getElementById('stocksGrid');
+            const lang = gameState.language;
+            const t = translations[lang];
             grid.innerHTML = '';
             
             Object.entries(stocks).forEach(([symbol, stock]) => {
@@ -398,24 +516,25 @@
                 
                 const changeClass = stock.change >= 0 ? 'price-up' : 'price-down';
                 const changeSymbol = stock.change >= 0 ? '+' : '';
+                const stockName = lang === 'hi' ? stock.nameHi : stock.name;
                 
                 card.innerHTML = `
                     <div class="stock-header">
                         <div>
                             <div class="stock-symbol">${symbol}</div>
-                            <div style="font-size: 0.9rem; color: #666;">${stock.name}</div>
+                            <div style="font-size: 0.9rem; color: #666;">${stockName}</div>
                         </div>
-                        <div class="stock-price ${changeClass}">$${stock.price.toFixed(2)}</div>
+                        <div class="stock-price ${changeClass}">₹${stock.price.toFixed(2)}</div>
                     </div>
                     <div class="stock-change ${changeClass}">
                         ${changeSymbol}${stock.change.toFixed(2)}%
                     </div>
                     <div class="trading-controls">
                         <input type="number" class="quantity-input" id="qty-${symbol}" 
-                               placeholder="Qty" min="1" value="1">
-                        <button class="btn btn-buy" onclick="buyStock('${symbol}')">Buy</button>
+                               placeholder="${t.qtyPlaceholder}" min="1" value="1">
+                        <button class="btn btn-buy" onclick="buyStock('${symbol}')">${t.buyBtn}</button>
                         <button class="btn btn-sell" onclick="sellStock('${symbol}')" 
-                                ${stock.owned === 0 ? 'disabled' : ''}>Sell</button>
+                                ${stock.owned === 0 ? 'disabled' : ''}>${t.sellBtn}</button>
                     </div>
                 `;
                 
@@ -428,9 +547,10 @@
             const quantity = parseInt(document.getElementById(`qty-${symbol}`).value) || 1;
             const stock = stocks[symbol];
             const totalCost = stock.price * quantity;
+            const lang = gameState.language;
             
             if (totalCost > gameState.cash) {
-                alert('Insufficient funds!');
+                alert(lang === 'hi' ? 'अपर्याप्त धन!' : 'Insufficient funds!');
                 return;
             }
             
@@ -446,16 +566,20 @@
             updatePortfolioDisplay();
             renderStocks();
             
-            showNotification(`Bought ${quantity} shares of ${symbol} for $${totalCost.toFixed(2)}`, 'success');
+            const message = lang === 'hi' ? 
+                `${symbol} के ${quantity} शेयर ₹${totalCost.toFixed(2)} में खरीदे गए` : 
+                `Bought ${quantity} shares of ${symbol} for ₹${totalCost.toFixed(2)}`;
+            showNotification(message, 'success');
         }
 
         // Sell stock function
         function sellStock(symbol) {
             const quantity = parseInt(document.getElementById(`qty-${symbol}`).value) || 1;
             const stock = stocks[symbol];
+            const lang = gameState.language;
             
             if (quantity > stock.owned) {
-                alert('You don\'t own enough shares!');
+                alert(lang === 'hi' ? 'आपके पास पर्याप्त शेयर नहीं हैं!' : 'You don\'t own enough shares!');
                 return;
             }
             
@@ -470,7 +594,10 @@
             updatePortfolioDisplay();
             renderStocks();
             
-            showNotification(`Sold ${quantity} shares of ${symbol} for $${totalValue.toFixed(2)}`, 'success');
+            const message = lang === 'hi' ? 
+                `${symbol} के ${quantity} शेयर ₹${totalValue.toFixed(2)} में बेचे गए` : 
+                `Sold ${quantity} shares of ${symbol} for ₹${totalValue.toFixed(2)}`;
+            showNotification(message, 'success');
         }
 
         // Update portfolio display
@@ -478,6 +605,8 @@
             const portfolioBody = document.getElementById('portfolioBody');
             const cashBalance = document.getElementById('cashBalance');
             const portfolioValue = document.getElementById('portfolioValue');
+            const lang = gameState.language;
+            const t = translations[lang];
             
             let totalValue = gameState.cash;
             let hasPositions = false;
@@ -500,10 +629,10 @@
                     row.innerHTML = `
                         <td>${symbol}</td>
                         <td>${stock.owned}</td>
-                        <td>$${currentValue.toFixed(2)}</td>
+                        <td>₹${currentValue.toFixed(2)}</td>
                         <td>
                             <span class="performance-indicator ${pnlClass}">
-                                ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${pnlPercent.toFixed(1)}%)
+                                ${pnl >= 0 ? '+' : ''}₹${pnl.toFixed(2)} (${pnlPercent.toFixed(1)}%)
                             </span>
                         </td>
                     `;
@@ -513,11 +642,11 @@
             });
             
             if (!hasPositions) {
-                portfolioBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #666;">No positions yet. Start trading!</td></tr>';
+                portfolioBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #666;">${t.noPositions}</td></tr>`;
             }
             
             cashBalance.textContent = gameState.cash.toFixed(2);
-            portfolioValue.textContent = `$${totalValue.toFixed(2)}`;
+            portfolioValue.textContent = `₹${totalValue.toFixed(2)}`;
             
             // Add performance indicator to portfolio value
             const totalReturn = totalValue - gameState.startingCash;
@@ -526,10 +655,10 @@
             if (totalReturn !== 0) {
                 const indicator = totalReturn >= 0 ? 'profit' : 'loss';
                 portfolioValue.innerHTML = `
-                    $${totalValue.toFixed(2)}
+                    ₹${totalValue.toFixed(2)}
                     <div style="font-size: 0.8rem; margin-top: 5px;">
                         <span class="performance-indicator ${indicator}">
-                            ${totalReturn >= 0 ? '+' : ''}$${totalReturn.toFixed(2)} (${returnPercent.toFixed(1)}%)
+                            ${totalReturn >= 0 ? '+' : ''}₹${totalReturn.toFixed(2)} (${returnPercent.toFixed(1)}%)
                         </span>
                     </div>
                 `;
@@ -539,7 +668,9 @@
         // Generate market news
         function generateNews() {
             const newsContainer = document.getElementById('newsContainer');
-            const randomNews = newsEvents[Math.floor(Math.random() * newsEvents.length)];
+            const lang = gameState.language;
+            const newsArray = newsEvents[lang];
+            const randomNews = newsArray[Math.floor(Math.random() * newsArray.length)];
             
             const newsItem = document.createElement('div');
             newsItem.className = 'news-item';
@@ -558,7 +689,11 @@
             // Apply news impact to stocks
             if (Math.random() < 0.3) { // 30% chance news affects prices
                 const affectedStocks = Object.keys(stocks).slice(0, Math.floor(Math.random() * 3) + 1);
-                const impact = randomNews.impact === 'positive' ? 0.05 : -0.05;
+                let impact = 0;
+                
+                if (randomNews.impact === 'positive') impact = 0.05;
+                else if (randomNews.impact === 'negative') impact = -0.05;
+                else impact = (Math.random() - 0.5) * 0.04; // mixed impact
                 
                 affectedStocks.forEach(symbol => {
                     stocks[symbol].price *= (1 + impact + (Math.random() - 0.5) * 0.02);
@@ -568,31 +703,22 @@
 
         // Show notification
         function showNotification(message, type) {
-            // Simple alert for now - can be enhanced with toast notifications
             const emoji = type === 'success' ? '✅' : '❌';
             alert(`${emoji} ${message}`);
         }
 
         // Reset game
         function resetGame() {
-            if (confirm('Are you sure you want to reset the game? This will clear your portfolio and reset your cash to $10,000.')) {
-                gameState.cash = 10000;
-                gameState.startingCash = 10000;
+            const lang = gameState.language;
+            const confirmMsg = lang === 'hi' ? 
+                'क्या आप वाकई गेम रीसेट करना चाहते हैं? इससे आपका पोर्टफोलियो क्लिअर हो जाएगा और आपका नकद ₹1,00,000 पर रीसेट हो जाएगा।' :
+                'Are you sure you want to reset the game? This will clear your portfolio and reset your cash to ₹1,00,000.';
+            
+            if (confirm(confirmMsg)) {
+                gameState.cash = 100000;
+                gameState.startingCash = 100000;
                 
                 Object.keys(stocks).forEach(symbol => {
                     stocks[symbol].owned = 0;
                     stocks[symbol].avgCost = 0;
                 });
-                
-                updatePortfolioDisplay();
-                renderStocks();
-                
-                showNotification('Game reset successfully!', 'success');
-            }
-        }
-
-        // Initialize game when page loads
-        document.addEventListener('DOMContentLoaded', initGame);
-    </script>
-</body>
-</html>
